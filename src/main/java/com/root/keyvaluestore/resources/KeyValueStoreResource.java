@@ -2,6 +2,7 @@ package com.root.keyvaluestore.resources;
 
 import java.net.URI;
 
+import javax.inject.Singleton;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -16,6 +17,7 @@ import javax.ws.rs.core.UriInfo;
 import com.root.keyvaluestore.dao.InMemoryKeyValueStoreDAO;
 import com.root.keyvaluestore.dao.KeyValueStoreDAO;
 import com.root.keyvaluestore.model.KeyValuePair;
+import com.root.keyvaluestore.util.BackgroundTaskManager;
 
 /*
  * Customer facing API for interacting with key value store
@@ -23,6 +25,7 @@ import com.root.keyvaluestore.model.KeyValuePair;
 @Path("keyvaluedatastore")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
+@Singleton
 public class KeyValueStoreResource {
     
     private final KeyValueStoreDAO<String, KeyValuePair> keyValueStoreDAO;
@@ -41,10 +44,28 @@ public class KeyValueStoreResource {
     public Response putKeyValuePair(final KeyValuePair keyValuePair, final @Context UriInfo uriInfo) {
         
         final KeyValuePair newKeyValuePair = keyValueStoreDAO.create(keyValuePair);
+        
+        BackgroundTaskManager.addTask(newKeyValuePair);
+        
         final String newKey = String.valueOf(newKeyValuePair.getKey());
         final URI uri = uriInfo.getAbsolutePathBuilder().path(newKey).build();
         
         return Response.created(uri).entity(newKeyValuePair).build();
     }
+    
+    @POST
+    @Path("/registerreplicanode")
+    public void registerReplicaNodes(String replicaNode) {
+        BackgroundTaskManager.addSubscribers(replicaNode);
+    }
+    
+    @POST
+    @Path("/replicatekeyvaluepair")
+    public void propagateReplicationData(final KeyValuePair keyValuePair) {
+//        final String[] keyValueData = keyValuePair.split("#");
+//        final KeyValuePair replicationKeyValuePair = new KeyValuePair(keyValueData[0], keyValueData[1]);
+        keyValueStoreDAO.create(keyValuePair);
+    }
 
 }
+

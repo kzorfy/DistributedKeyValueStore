@@ -11,7 +11,7 @@ import java.util.Map;
  */
 public class InMemoryKeyValueStore implements KeyValueStore<String, String> {
     
-    private static final Map<String, String> keyValueStore = new HashMap<>();
+    private final Map<String, String> keyValueStore = new HashMap<>();
 
     @Override
     public void put(String key, String value) {
