@@ -19,11 +19,15 @@ import org.glassfish.jersey.client.ClientProperties;
 
 import com.root.keyvaluestore.model.KeyValuePair;
 
+/*
+ * Background task runner to publish the data to replication nodes
+ * TODO: Add log4j for printing error messages
+ */
 public class BackgroundTaskManager implements ServletContextListener {
 
     private static volatile Set<String> subscribers;
     
-    private static BlockingQueue<KeyValuePair> blockingQueue;
+    private static volatile BlockingQueue<KeyValuePair> blockingQueue;
     
     private Client restClient;
     
@@ -47,7 +51,8 @@ public class BackgroundTaskManager implements ServletContextListener {
     public static void addTask(final KeyValuePair keyValuePair) {
         try {
             blockingQueue.put(keyValuePair);
-        } catch (InterruptedException e) {
+        } catch (Exception ex) {
+            System.out.println("Excpetion while adding background TO DO task" + ex);
         }
     }
     
@@ -65,7 +70,13 @@ public class BackgroundTaskManager implements ServletContextListener {
                     try {
                         final KeyValuePair keyValuePair = blockingQueue.take();
                         for (String subscriber: subscribers) {
+                            System.out.println(String.format("Publishing data to replica node %s", subscriber));
                             final Response response = restClient.target(subscriber).request().post(Entity.json(keyValuePair));
+                            if(response.getStatus() != 202) {
+                                System.out.println(String.format(
+                                        "Failed to publish data to replica node %s with status code %s", subscriber, response.getStatus()));
+                            }
+                            
                         }
                     } catch (InterruptedException e) {
                         continue;

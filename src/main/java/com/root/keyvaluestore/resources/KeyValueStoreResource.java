@@ -13,6 +13,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.core.Response.Status;
 
 import com.root.keyvaluestore.dao.InMemoryKeyValueStoreDAO;
 import com.root.keyvaluestore.dao.KeyValueStoreDAO;
@@ -55,14 +56,16 @@ public class KeyValueStoreResource {
     
     @POST
     @Path("/registerreplicanode")
-    public void registerReplicaNodes(String replicaNode) {
+    public Response registerReplicaNodes(String replicaNode) {
         BackgroundTaskManager.addSubscribers(replicaNode);
+        return Response.status(Status.CREATED).build();
     }
     
     @POST
     @Path("/replicatekeyvaluepair")
-    public void propagateReplicationData(final KeyValuePair keyValuePair) {
+    public Response propagateReplicationData(final KeyValuePair keyValuePair) {
         keyValueStoreDAO.create(keyValuePair);
+        return Response.status(Status.CREATED).build();
     }
 
 }
