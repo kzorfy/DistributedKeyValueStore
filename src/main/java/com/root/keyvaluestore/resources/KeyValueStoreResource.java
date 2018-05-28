@@ -62,8 +62,6 @@ public class KeyValueStoreResource {
     @POST
     @Path("/replicatekeyvaluepair")
     public void propagateReplicationData(final KeyValuePair keyValuePair) {
-//        final String[] keyValueData = keyValuePair.split("#");
-//        final KeyValuePair replicationKeyValuePair = new KeyValuePair(keyValueData[0], keyValueData[1]);
         keyValueStoreDAO.create(keyValuePair);
     }
 
