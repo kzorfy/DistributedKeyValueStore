@@ -1,13 +1,11 @@
 package com.root.keyvaluestore.resources;
 
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.fail;
 
 import java.net.URI;
 
-import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
@@ -16,7 +14,6 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.mockito.Spy;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -49,13 +46,10 @@ public class KeyValueStoreResourceTest {
     
     private KeyValueStoreResource target;
     
-    private KeyValueStoreResource spyTarget;
-    
     @BeforeMethod
     public void initSetup() {
         MockitoAnnotations.initMocks(this);
         this.target = new KeyValueStoreResource(mockKeyValueStoreDAO);
-        this.spyTarget = Mockito.spy(this.target);
     }
     
     @Test(dataProvider = "testCaseForKeyValueStoreResourcePutKeyValuePairMethod")
@@ -75,9 +69,8 @@ public class KeyValueStoreResourceTest {
         when(mockUriBuilder.build()).thenReturn(uri);
         
         try {
-            spyTarget.putKeyValuePair(keyValuePair, mockUriInfo);
+            target.putKeyValuePair(keyValuePair, mockUriInfo);
         } catch (Exception e) {
-            System.out.println(e.getStackTrace());
             if (exception == null) {
                 fail("Unexpected error occurred");
             } else {
@@ -106,7 +99,7 @@ public class KeyValueStoreResourceTest {
         
         try {
             
-            spyTarget.getKeyValuePair(key);
+            target.getKeyValuePair(key);
         } catch (Exception e) {
             if (exception == null) {
                 fail("Unexpected error occurred");
