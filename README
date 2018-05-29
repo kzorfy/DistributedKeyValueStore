@@ -1,0 +1,16 @@
+This project is a simple single threaded distributed key value store which replicates put requests across the nodes in the cluster
+
+Compilation Steps:
+Install maven cli
+Run >> mvn clean install
+
+How to run multiple instance of the application in different ports?
+>>mvn -Dmaven.tomcat.port={PORT_NO} tomcat:run-war
+eg: mvn -Dmaven.tomcat.port=8080 tomcat:run-war
+
+Steps to produce the replication behavior
+1. Launch node1 using the command mvn -Dmaven.tomcat.port=8080 tomcat:run-war
+2. Launch node2 using the command mvn -Dmaven.tomcat.port=8081 tomcat:run-war
+3. Register the replica node info to each other using the API "/registerreplicanode"
+4. Perform GET and POST operations on any of the running replicas and see the data getting repliacted to all the other nodes in the cluster
+>>>>>For better understanding please look into KeyValueStoreResourceIntegrationTest integration test<<<<<<
