@@ -16,6 +16,10 @@ public class InMemoryKeyValueStoreDAO implements KeyValueStoreDAO<String, KeyVal
         this.keyValueStore = new InMemoryKeyValueStore();
     }
     
+    protected InMemoryKeyValueStoreDAO(final KeyValueStore<String, String> keyValueStore) {
+        this.keyValueStore = keyValueStore;
+    }
+    
     @Override
     public KeyValuePair create(final KeyValuePair keyValuePair) {
         keyValueStore.put(keyValuePair.getKey(), keyValuePair.getValue());

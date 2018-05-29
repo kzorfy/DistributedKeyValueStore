@@ -35,6 +35,10 @@ public class KeyValueStoreResource {
         this.keyValueStoreDAO = new InMemoryKeyValueStoreDAO();
     }
     
+    protected KeyValueStoreResource(final KeyValueStoreDAO<String, KeyValuePair> keyValueStoreDAO) {
+        this.keyValueStoreDAO = keyValueStoreDAO;
+    }
+    
     @GET
     @Path("/{key}")
     public KeyValuePair getKeyValuePair(final @PathParam("key") String key) {
@@ -46,7 +50,7 @@ public class KeyValueStoreResource {
         
         final KeyValuePair newKeyValuePair = keyValueStoreDAO.create(keyValuePair);
         
-        BackgroundTaskManager.addTask(newKeyValuePair);
+        resgisterBackgroundReplicationTask(newKeyValuePair);
         
         final String newKey = String.valueOf(newKeyValuePair.getKey());
         final URI uri = uriInfo.getAbsolutePathBuilder().path(newKey).build();
@@ -66,6 +70,10 @@ public class KeyValueStoreResource {
     public Response propagateReplicationData(final KeyValuePair keyValuePair) {
         keyValueStoreDAO.create(keyValuePair);
         return Response.status(Status.CREATED).build();
+    }
+    
+    void resgisterBackgroundReplicationTask(final KeyValuePair keyValuePair) {
+        BackgroundTaskManager.addTask(keyValuePair);
     }
 
 }
