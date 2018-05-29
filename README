@@ -14,3 +14,21 @@ Steps to produce the replication behavior
 3. Register the replica node info to each other using the API "/registerreplicanode"
 4. Perform GET and POST operations on any of the running replicas and see the data getting repliacted to all the other nodes in the cluster
 >>>>>For better understanding please look into KeyValueStoreResourceIntegrationTest integration test<<<<<<
+
+
+Sample POST request:
+URI: http://localhost:8080/keyvaluestore/webapi/keyvaluedatastore
+Payload:
+{
+  "key":"key",
+  "value":"value"
+}
+
+
+Sample GET request:
+URI: http://localhost:8080/keyvaluestore/webapi/keyvaluedatastore/key
+Response:
+{
+  "key":"key",
+  "value":"value"
+}
