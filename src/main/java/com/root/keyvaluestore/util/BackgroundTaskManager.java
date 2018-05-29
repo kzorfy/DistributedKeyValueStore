@@ -72,7 +72,7 @@ public class BackgroundTaskManager implements ServletContextListener {
                         for (String subscriber: subscribers) {
                             System.out.println(String.format("Publishing data to replica node %s", subscriber));
                             final Response response = restClient.target(subscriber).request().post(Entity.json(keyValuePair));
-                            if(response.getStatus() != 202) {
+                            if(response.getStatus() != 201) {
                                 System.out.println(String.format(
                                         "Failed to publish data to replica node %s with status code %s", subscriber, response.getStatus()));
                             }
